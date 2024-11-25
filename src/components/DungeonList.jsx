@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getDungeons } from '../api/dungeonApi';
+import { Link } from 'react-router-dom';
 
 const DungeonList = () => {
     const [dungeons, setDungeons] = useState([]);
@@ -19,7 +20,7 @@ const DungeonList = () => {
             <ul>
                 {dungeons.map((dungeon) => (
                     <li key={dungeon._id}>
-                        {dungeon.name} - {dungeon.difficulty}
+                        <Link to={`/dungeons/${dungeon._id}`}>{dungeon.name} - {dungeon.difficulty}</Link>
                     </li>
                 ))}
             </ul>
