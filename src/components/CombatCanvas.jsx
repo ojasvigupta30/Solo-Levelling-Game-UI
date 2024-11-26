@@ -9,12 +9,23 @@ const CombatCanvas = ({ playerHealth, monsterHealth, triggerSkillEffect, isPlaye
     canvas.width = 600;
     canvas.height = 400;
 
-    // Draw the combat scene
-    drawScene(ctx, playerHealth, monsterHealth);
+    const playerImg = new Image();
+    const monsterImg = new Image();
+
+    // Load player and monster images
+    playerImg.src = '/assets/Player.png';
+    monsterImg.src = '/assets/monster.png';
+
+    // Once images are loaded, draw the scene
+    playerImg.onload = () => {
+      monsterImg.onload = () => {
+        drawScene(ctx, playerHealth, monsterHealth, playerImg, monsterImg);
+      };
+    };
 
     // Add attack animations
     if (triggerSkillEffect) {
-      animateAttack(ctx, isPlayerAttacking ? 100 : 500, 200);
+      animateAttack(ctx, isPlayerAttacking, playerImg, monsterImg);
     }
 
     // Add victory/loss effects
@@ -27,7 +38,7 @@ const CombatCanvas = ({ playerHealth, monsterHealth, triggerSkillEffect, isPlaye
     }
   }, [playerHealth, monsterHealth, triggerSkillEffect, isPlayerAttacking, battleResult]);
 
-  const drawScene = (ctx, playerHealth, monsterHealth) => {
+  const drawScene = (ctx, playerHealth, monsterHealth, playerImg, monsterImg) => {
     // Clear the canvas
     ctx.clearRect(0, 0, 600, 400);
 
@@ -36,38 +47,76 @@ const CombatCanvas = ({ playerHealth, monsterHealth, triggerSkillEffect, isPlaye
     ctx.fillRect(0, 0, 600, 400);
 
     // Draw Player
-    drawCharacter(ctx, 50, 150, 'blue', playerHealth, 'Player');
+    drawCharacter(ctx, 50, 150, playerImg, playerHealth, 'Player');
 
     // Draw Monster
-    drawCharacter(ctx, 450, 150, 'red', monsterHealth, 'Monster');
+    drawCharacter(ctx, 450, 150, monsterImg, monsterHealth, 'Monster');
   };
 
-  const drawCharacter = (ctx, x, y, color, health, label) => {
-    // Draw body
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, 50, 100);
+  const drawCharacter = (ctx, x, y, img, health, label) => {
+    // Draw character image
+    ctx.drawImage(img, x, y, 80, 120);
 
     // Draw health bar
     ctx.fillStyle = 'green';
-    ctx.fillRect(x, y - 20, (health / 100) * 50, 10);
+    ctx.fillRect(x, y - 20, (health / 100) * 80, 10);
 
     // Draw label
     ctx.fillStyle = 'white';
     ctx.font = '16px Arial';
-    ctx.fillText(label, x, y - 30);
+    ctx.fillText(label, x + 20, y - 30);
   };
 
-  const animateAttack = (ctx, x, y) => {
-    // Create attack flash
-    ctx.beginPath();
-    ctx.arc(x, y, 30, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
-    ctx.fill();
-    ctx.closePath();
+  const animateAttack = (ctx, isPlayerAttacking, playerImg, monsterImg) => {
+    let animationFrame;
+    const attackDuration = 500; // 500ms
+    const startTime = performance.now();
+    const initialX = isPlayerAttacking ? 50 : 450;
+    const targetX = isPlayerAttacking ? 300 : 200; // Move closer to opponent
+    const attackColor = isPlayerAttacking ? 'rgba(0, 150, 255, 0.7)' : 'rgba(255, 50, 50, 0.7)';
 
-    setTimeout(() => {
-      ctx.clearRect(x - 40, y - 40, 80, 80); // Clear attack flash
-    }, 300);
+    const animate = (time) => {
+      const elapsed = time - startTime;
+
+      if (elapsed < attackDuration) {
+        const progress = elapsed / attackDuration;
+
+        // Calculate interpolated position for the attacker
+        const currentX = initialX + (targetX - initialX) * progress;
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, 600, 400);
+
+        // Background
+        ctx.fillStyle = '#1c1f26';
+        ctx.fillRect(0, 0, 600, 400);
+
+        // Draw Attacker and Defender
+        if (isPlayerAttacking) {
+          drawCharacter(ctx, currentX, 150, playerImg, playerHealth, 'Player'); // Player moves
+          drawCharacter(ctx, 450, 150, monsterImg, monsterHealth, 'Monster'); // Monster stays still
+        } else {
+          drawCharacter(ctx, 50, 150, playerImg, playerHealth, 'Player'); // Player stays still
+          drawCharacter(ctx, currentX, 150, monsterImg, monsterHealth, 'Monster'); // Monster moves
+        }
+
+        // Draw attack flash at target
+        ctx.beginPath();
+        ctx.arc(targetX + 30, 200, 30, 0, Math.PI * 2);
+        ctx.fillStyle = attackColor;
+        ctx.fill();
+        ctx.closePath();
+
+        // Request next frame
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        // End animation and redraw the static scene
+        cancelAnimationFrame(animationFrame);
+        drawScene(ctx, playerHealth, monsterHealth, playerImg, monsterImg);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
   };
 
   const drawFireworks = (ctx) => {
@@ -107,7 +156,7 @@ const CombatCanvas = ({ playerHealth, monsterHealth, triggerSkillEffect, isPlaye
         // Draw particle
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${hexToRgb(particle.color)}, ${particle.opacity})`;
+        ctx.fillStyle = `rgba(${particle.color}, ${particle.opacity})`;
         ctx.fill();
         ctx.closePath();
       });
@@ -119,15 +168,6 @@ const CombatCanvas = ({ playerHealth, monsterHealth, triggerSkillEffect, isPlaye
     };
 
     animateParticles();
-  };
-
-  const hexToRgb = (hex) => {
-    const rgb = {
-      red: parseInt(hex.slice(1, 3), 16),
-      green: parseInt(hex.slice(3, 5), 16),
-      blue: parseInt(hex.slice(5, 7), 16),
-    };
-    return `${rgb.red}, ${rgb.green}, ${rgb.blue}`;
   };
 
   const drawFadeOut = (ctx) => {
