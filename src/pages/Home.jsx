@@ -1,23 +1,17 @@
-import { useState } from 'react';
-import PlayerForm from '../components/PlayerForm';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const [player, setPlayer] = useState(null);
+  const navigate = useNavigate();
 
-    const handlePlayerCreated = (newPlayer) => {
-        setPlayer(newPlayer);
-    };
-
-    return (
-        <div>
-            <h1>Solo Leveling Game</h1>
-            {player ? (
-                <p>Welcome, {player.username}! Level: {player.level}</p>
-            ) : (
-                <PlayerForm onPlayerCreated={handlePlayerCreated} />
-            )}
-        </div>
-    );
+  return (
+    <div>
+      <h1>Welcome to the Game</h1>
+      <button onClick={() => navigate('/dungeons')}>Explore Dungeons</button>
+      <button onClick={() => navigate('/player-name')}>Set Player Name</button>
+      <button onClick={() => navigate('/login')}>Log Out</button>
+    </div>
+  );
 };
 
 export default Home;
