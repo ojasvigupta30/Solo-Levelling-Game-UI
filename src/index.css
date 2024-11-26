@@ -215,3 +215,9 @@ button {
 .card button {
   margin-top: 10px;
 }
+
+canvas {
+  margin: 20px 0;
+  display: block;
+  background: linear-gradient(180deg, #2c313c, #1c1f26);
+}

@@ -1,82 +1,87 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { battleMonster } from '../api/combatApi';
+import CombatCanvas from '../components/CombatCanvas';
 
 const Combat = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { dungeonName, monster } = location.state;
-    const [battleResult, setBattleResult] = useState(null);
-    const [lootGained, setLootGained] = useState([]);
-    const [playerStats, setPlayerStats] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { dungeonName, monster } = location.state || {};
 
-    console.log('Combat page received state:', location.state);
+  if (!dungeonName || !monster) {
+    console.warn('Invalid state received. Redirecting to dungeons.');
+    navigate('/dungeons');
+    return null;
+  }
 
-    const handleBattle = async () => {
-        setLoading(true);
-        const playerName = localStorage.getItem('username');
+  const [playerHealth, setPlayerHealth] = useState(100);
+  const [monsterHealth, setMonsterHealth] = useState(monster.health);
+  const [battleResult, setBattleResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [triggerSkillEffect, setTriggerSkillEffect] = useState(false);
+  const [isPlayerAttacking, setIsPlayerAttacking] = useState(true);
 
-        try {
-            const token = localStorage.getItem('token');
-            const response = await battleMonster({ playerName, monsterId: monster._id }, token);
+  const handleBattle = async () => {
+    setLoading(true);
+    const playerName = localStorage.getItem('username');
 
-            setBattleResult(response.message);
-            setLootGained(response.lootGained);
-            setPlayerStats(response.player);
-        } catch (error) {
-            alert('Error during battle: ' + (error.response?.data?.message || error.message));
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      const token = localStorage.getItem('token');
+      const response = await battleMonster({ playerName, monsterId: monster._id }, token);
 
-    if (loading) return <p>Loading battle...</p>;
+      // Simulate attack animations
+      animateAttack(true); // Player attacks first
+      setTimeout(() => animateAttack(false), 1000); // Monster attacks after 1 second
 
-    return (
-        <div className="center">
-            <h1>Combat: {dungeonName}</h1>
-            <h2>Monster: {monster.name}</h2>
-            <p>Health: {monster.health}</p>
-            <p>Attack: {monster.attack}</p>
-            <p>Defense: {monster.defense}</p>
+      // Update health values
+      setPlayerHealth((prev) => Math.max(prev - Math.random() * 20, 0));
+      setMonsterHealth((prev) => Math.max(prev - Math.random() * 20, 0));
 
-            {battleResult ? (
-                <div>
-                    <h3>{battleResult}</h3>
-                    {lootGained && lootGained.length > 0 && (
-                        <div>
-                            <h4>Loot Gained:</h4>
-                            <ul>
-                                {lootGained.map((item, index) => (
-                                    <li key={index}>{item}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                    {playerStats && (
-                        <div>
-                            <h4>Updated Player Stats:</h4>
-                            <p>Level: {playerStats.level}</p>
-                            <p>XP: {playerStats.xp}</p>
-                            <p>Health: {playerStats.stats.health}</p>
-                            <p>Attack: {playerStats.stats.attack}</p>
-                            <p>Defense: {playerStats.stats.defense}</p>
-                            <h4>Updated Inventory:</h4>
-                            <ul>
-                                {playerStats.inventory.map((item, index) => (
-                                    <li key={index}>{item}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                    <button onClick={() => navigate('/dungeons')}>Back to Dungeons</button>
-                </div>
-            ) : (
-                <button onClick={handleBattle}>Engage in Combat</button>
-            )}
+      // Determine the result
+      if (playerHealth <= 0) {
+        setBattleResult('Defeat! You were defeated by the monster.');
+      } else if (monsterHealth <= 0) {
+        setBattleResult('Victory! You defeated the monster.');
+      } else {
+        setBattleResult(response.message);
+      }
+    } catch (error) {
+      console.error('Error during battle:', error);
+      alert('Error during battle: ' + (error.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const animateAttack = (isPlayer) => {
+    setIsPlayerAttacking(isPlayer);
+    setTriggerSkillEffect(true);
+    setTimeout(() => setTriggerSkillEffect(false), 500); // Skill effect lasts for 0.5 seconds
+  };
+
+  if (loading) return <p>Loading battle...</p>;
+
+  return (
+    <div className="center">
+      <h1>Combat: {dungeonName}</h1>
+      <CombatCanvas
+        playerHealth={playerHealth}
+        monsterHealth={monsterHealth}
+        triggerSkillEffect={triggerSkillEffect}
+        isPlayerAttacking={isPlayerAttacking}
+        battleResult={battleResult}
+      />
+
+      {battleResult ? (
+        <div>
+          <h3>{battleResult}</h3>
+          <button onClick={() => navigate('/dungeons')}>Back to Dungeons</button>
         </div>
-    );
+      ) : (
+        <button onClick={handleBattle}>Engage in Combat</button>
+      )}
+    </div>
+  );
 };
 
 export default Combat;
