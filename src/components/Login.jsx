@@ -12,8 +12,10 @@ const Login = () => {
 
     try {
       const response = await loginUser({ username, password });
-      localStorage.setItem('token', response.data.token); // Save token
-      navigate('/home'); // Navigate to Home page
+      localStorage.setItem('token', response.token); // Save the token
+      localStorage.setItem('username', username); // Save username
+      alert('Login successful');
+      navigate('/set-player-name'); // Redirect to Set Player Name Page
     } catch (error) {
       alert('Login failed: ' + (error.response?.data?.message || error.message));
     }
