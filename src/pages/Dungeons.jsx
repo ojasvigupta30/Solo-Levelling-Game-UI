@@ -10,23 +10,18 @@ const Dungeons = () => {
   useEffect(() => {
     const fetchDungeons = async () => {
       const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
       try {
         const data = await getDungeons(token);
         setDungeons(data);
       } catch (error) {
-        alert('Error fetching dungeons: ' + error.message);
+        alert('Error fetching dungeons: ' + (error.response?.data?.message || error.message));
       } finally {
         setLoading(false);
       }
     };
 
     fetchDungeons();
-  }, [navigate]);
+  }, []);
 
   if (loading) return <p>Loading dungeons...</p>;
 
@@ -36,12 +31,12 @@ const Dungeons = () => {
       <ul>
         {dungeons.map((dungeon) => (
           <li key={dungeon._id}>
-            <h3>{dungeon.name} - {dungeon.difficulty}</h3>
-            <button onClick={() => navigate(`/dungeons/${dungeon._id}`)}>Explore</button>
+            <h3>{dungeon.name} - Difficulty: {dungeon.difficulty}</h3>
+            <button onClick={() => navigate(`/dungeons/${dungeon._id}`)}>View Details</button>
           </li>
         ))}
       </ul>
-      <button onClick={() => navigate('/home')}>Back to Home</button>
+      <button onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
     </div>
   );
 };

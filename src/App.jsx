@@ -8,6 +8,7 @@ import PlayerProfile from './components/PlayerProfile';
 import Home from './pages/Home';
 import Dungeons from './pages/Dungeons';
 import DungeonDetail from './components/DungeonDetail';
+import Combat from './pages/Combat';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
       <Route path="/home" element={<Home />} />
       <Route path="/dungeons" element={<Dungeons />} />
       <Route path="/dungeons/:id" element={<DungeonDetail />} />
+      <Route path="/combat" element={<Combat />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
