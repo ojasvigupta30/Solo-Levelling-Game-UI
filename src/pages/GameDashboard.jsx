@@ -5,7 +5,7 @@ const GameDashboard = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div className='center'>
       <h1>Game Dashboard</h1>
       <button onClick={() => navigate('/profile')}>View Player Profile</button>
       <button onClick={() => navigate('/dungeons')}>Explore Dungeons</button>

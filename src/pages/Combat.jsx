@@ -27,7 +27,7 @@ const Combat = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div>
+    <div className='center'>
       <h1>Combat: {dungeonName}</h1>
       <h2>Monster: {monster.name}</h2>
       <p>Health: {monster.health}</p>

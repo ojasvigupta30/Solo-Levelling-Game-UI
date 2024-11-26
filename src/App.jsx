@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Dungeons from './pages/Dungeons';
 import DungeonDetail from './components/DungeonDetail';
 import Combat from './pages/Combat';
+import './index.css'
 
 const App = () => {
   return (

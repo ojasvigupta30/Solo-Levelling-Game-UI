@@ -26,16 +26,17 @@ const Dungeons = () => {
   if (loading) return <p>Loading dungeons...</p>;
 
   return (
-    <div>
+    <div className="container center">
       <h1>Available Dungeons</h1>
-      <ul>
+      <div className="grid">
         {dungeons.map((dungeon) => (
-          <li key={dungeon._id}>
-            <h3>{dungeon.name} - Difficulty: {dungeon.difficulty}</h3>
+          <div className="card" key={dungeon._id}>
+            <h3>{dungeon.name}</h3>
+            <p>Difficulty: {dungeon.difficulty}</p>
             <button onClick={() => navigate(`/dungeons/${dungeon._id}`)}>View Details</button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
       <button onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
     </div>
   );
