@@ -12,7 +12,7 @@ const Login = () => {
 
     try {
       const response = await loginUser({ username, password });
-      localStorage.setItem('token', response.token); // Save the token
+      localStorage.setItem('token', response.data.token); // Save the token
       localStorage.setItem('username', username); // Save username
       alert('Login successful');
       navigate('/set-player-name'); // Redirect to Set Player Name Page
