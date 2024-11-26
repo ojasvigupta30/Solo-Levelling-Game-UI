@@ -45,4 +45,4 @@ const PlayerForm = () => {
     );
 };
 
-export default PlayerName;
+export default PlayerForm;
