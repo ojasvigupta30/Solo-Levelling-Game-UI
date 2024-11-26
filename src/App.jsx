@@ -5,7 +5,7 @@ import Register from './components/Register';
 import PlayerName from './components/PlayerName';
 import Home from './pages/Home';
 import Dungeons from './pages/Dungeons';
-import DungeonDetail from './pages/DungeonDetail';
+import DungeonDetail from './components/DungeonDetail';
 
 const App = () => {
   return (
