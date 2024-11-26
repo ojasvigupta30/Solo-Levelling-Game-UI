@@ -19,7 +19,7 @@ const Register = () => {
             });
 
             alert('Registration successful');
-            navigate('/login'); // Navigate back to login page
+            navigate('/login'); // Navigate back to Login
         } catch (error) {
             alert('Registration failed: ' + (error.response?.data?.message || error.message));
         }
@@ -52,12 +52,7 @@ const Register = () => {
                 />
                 <button type="submit">Register</button>
             </form>
-            <p>
-                Already have an account?{' '}
-                <button onClick={() => navigate('/login')}>
-                    Login Here
-                </button>
-            </p>
+            <button onClick={() => navigate('/login')}>Back to Login</button>
         </div>
     );
 };
