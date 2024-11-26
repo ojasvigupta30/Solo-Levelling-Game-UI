@@ -16,9 +16,9 @@ const Login = () => {
                 password,
             });
 
-            localStorage.setItem('token', response.data.token); // Store token
+            localStorage.setItem('token', response.data.token); // Save the token
             alert('Login successful');
-            navigate('/player-name'); // Navigate to player name selection
+            navigate('/home'); // Navigate to Home page
         } catch (error) {
             alert('Login failed: ' + (error.response?.data?.message || error.message));
         }
@@ -44,12 +44,7 @@ const Login = () => {
                 />
                 <button type="submit">Login</button>
             </form>
-            <p>
-                New user?{' '}
-                <button onClick={() => navigate('/register')}>
-                    Register Here
-                </button>
-            </p>
+            <button onClick={() => navigate('/register')}>New User? Register Here</button>
         </div>
     );
 };
