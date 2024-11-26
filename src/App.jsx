@@ -6,17 +6,19 @@ import NavigationButtons from './components/NavigationButtons'; // Separate comp
 import DungeonDetail from './components/DungeonDetail';
 import Login from './components/Login';
 import Register from './components/Register';
+import PlayerForm from './components/PlayerForm';
 
 const App = () => {
   return (
     <div>
       <NavigationButtons />
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/dungeons" element={<Dungeons />} />
-        <Route path="/dungeons/:id" element={<DungeonDetail />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/player-form" element={<PlayerForm />} />
+      <Route path="/home" element={<Home />} />
+      {/* Redirect all unknown routes to login */}
+      <Route path="*" element={<Login />} />
       </Routes>
     </div>
   );
