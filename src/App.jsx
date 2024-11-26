@@ -1,26 +1,22 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Dungeons from './pages/Dungeons';
-import NavigationButtons from './components/NavigationButtons'; // Separate component for buttons
-import DungeonDetail from './components/DungeonDetail';
 import Login from './components/Login';
 import Register from './components/Register';
-import PlayerForm from './components/PlayerForm';
+import Home from './pages/Home';
+import Dungeons from './pages/Dungeons';
+import DungeonDetail from './components/DungeonDetail';
 
 const App = () => {
   return (
-    <div>
-      <NavigationButtons />
-      <Routes>
+    <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/player-form" element={<PlayerForm />} />
       <Route path="/home" element={<Home />} />
-      {/* Redirect all unknown routes to login */}
+      <Route path="/dungeons" element={<Dungeons />} />
+      <Route path="/dungeons/:id" element={<DungeonDetail />} />
+      {/* Redirect any unmatched routes to login */}
       <Route path="*" element={<Login />} />
-      </Routes>
-    </div>
+    </Routes>
   );
 };
 
